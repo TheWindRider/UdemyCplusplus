@@ -1,5 +1,5 @@
 /*
- * Map&Set.cpp
+ * Map.cpp
  *
  *  Created on: Nov 17, 2017
  *      Author: frankycg
@@ -27,7 +27,7 @@ public:
 		age = another.age;
 //		cout << "Copy constructor" << endl;
 	}
-	/* const if used as key in map */
+	/* const if used as key in map, or set element, etc. */
 	void print() const {
 		cout << name << " is " << age << " years old. ";
 	}
