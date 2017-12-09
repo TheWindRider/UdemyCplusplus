@@ -10,6 +10,14 @@
 #include <algorithm>
 using namespace std;
 
+struct matchSizeGeneral {
+	/* compared against next block of code, this avoids hard-coding */
+	int criteriaSize;
+	bool operator()(string input) {
+		return input.size() == criteriaSize;
+	}
+};
+
 bool matchSize(string input) {
     return input.size() == 3;
 }
@@ -37,6 +45,10 @@ int main()
     strVec.push_back("three");
     strVec.push_back("four");
     strVec.push_back("five");
+
+    matchSizeGeneral myMatchSize = {4};
+    /* using a functor, which looks same as a function */
+    cout << count_if(strVec.begin(), strVec.end(), myMatchSize) << endl;
 
     /* custom criteria */
     cout << count_if(strVec.begin(), strVec.end(), matchSize) << endl; // function name is the pointer
