@@ -1,5 +1,5 @@
 //============================================================================
-// Name        : section7-1.cpp
+// Name        : Function&Functor.cpp
 // Author      : Chenguang Yang
 
 // Description : Udemy exercise

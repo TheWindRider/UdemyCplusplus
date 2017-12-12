@@ -1,5 +1,5 @@
 //============================================================================
-// Name        : section7-2.cpp
+// Name        : Abstract&Virtual.cpp
 // Author      : Chenguang Yang
 
 // Description : Udemy exercise
