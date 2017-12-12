@@ -24,10 +24,14 @@ int main() {
 
     /* Iterate vector or list with iterator */
     vector<string>::iterator vec_it = words.begin();
+    list<int>::iterator list_it = num_list.begin();
     for (vec_it = words.begin(); vec_it != words.end(); vec_it++) {
         cout << *vec_it << endl;
     }
-    list<int>::iterator list_it = num_list.begin();
+    /* Iterate made easier in C++11 */
+    for (auto eachWord : words) {
+    	cout << eachWord << endl;
+    }
     /* insert and erase works for list, but not vector */
     while (list_it != num_list.end()) {
     	if (*list_it == 2) {
