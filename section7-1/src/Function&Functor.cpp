@@ -19,7 +19,7 @@ struct matchSizeGeneral {
 };
 
 bool matchSize(string input) {
-    return input.size() == 3;
+    return input.size() == 3; // hard coding not desirable compared against other solution
 }
 
 bool matchTrend(string before, string after) {
@@ -30,7 +30,7 @@ bool matchTrend(string before, string after) {
 int my_count_if(vector<string> &strVec, bool (*match)(string first, string second)) {
     int total = 0;
     for (int i = 1; i < strVec.size(); i++) {
-        if (matchTrend(strVec[i-1], strVec[i])) {
+        if (match(strVec[i-1], strVec[i])) {
             total += 1;
         }
     }
@@ -46,10 +46,15 @@ int main()
     strVec.push_back("four");
     strVec.push_back("five");
 
-    matchSizeGeneral myMatchSize = {4};
+    int threshold = 4;
+    matchSizeGeneral myMatchSize = {threshold};
     /* using a functor, which looks same as a function */
     cout << count_if(strVec.begin(), strVec.end(), myMatchSize) << endl;
-
+    /* new in C++11: using a lambda function with local variables catching */
+    cout << count_if(strVec.begin(), strVec.end(), [threshold](string input) mutable {
+    	threshold = 5; // temporarily change variable value
+    	return input.size() == threshold;
+    }) << endl;
     /* custom criteria */
     cout << count_if(strVec.begin(), strVec.end(), matchSize) << endl; // function name is the pointer
     /* custom criteria and function */
