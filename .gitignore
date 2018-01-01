@@ -33,3 +33,4 @@
 
 # Child folders
 .settings/
+.gitignore
