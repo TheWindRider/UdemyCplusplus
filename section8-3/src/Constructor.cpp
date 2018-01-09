@@ -8,6 +8,7 @@
 #include <iostream>
 #include <vector>
 #include <memory.h>
+#include <memory>
 using namespace std;
 
 class Person {
@@ -63,6 +64,12 @@ public:
 };
 int main() {
 	Person newBorn;
+	{
+		/* pointer that doesn't automatically recycle memory */
+		Person *p_newBorn = new Person;
+		/* New in C++11: pointer automatically recycle memory */
+		unique_ptr<Person> pu_newBorn (new Person(1, "cry..."));
+	}
 	cout << "Baby created" << endl;
 	vector<Person> people;
 	cout << "A vector of person created" << endl;
