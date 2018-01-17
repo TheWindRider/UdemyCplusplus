@@ -7,6 +7,7 @@
 
 #include <iostream>
 #include <cstdint>
+#include <memory>
 #include "Bitmap.h"
 #include "Mandelbrot.h"
 using namespace std;
@@ -16,8 +17,9 @@ int main() {
 	const int WIDTH = 800;
 	const int HEIGHT = 600;
 
-	int colorMax = -1;
-	int colorMin = 256;
+	unique_ptr<int[]> histIteration(new int[Mandelbrot::MAX_ITER]{0});
+	unique_ptr<int[]> cumlIteration(new int[Mandelbrot::MAX_ITER]{0});
+	unique_ptr<int[]> fractal(new int[WIDTH * HEIGHT]{0});
 
 	Bitmap testPic(WIDTH, HEIGHT);
 	for (int x = 0; x < WIDTH; x++) {
@@ -28,16 +30,32 @@ int main() {
 			double yRescale = (y - HEIGHT/2) * 2.0 / HEIGHT;
 			int iter = Mandelbrot::getIteration(xRescale, yRescale);
 
-//			uint8_t color = (uint8_t)(255 * (double)iter / Mandelbrot::MAX_ITER);  // MAX_ITER will be 255
-			uint8_t color = (uint8_t)(256 * (double)iter / Mandelbrot::MAX_ITER);  // MAX_ITER will be 0
-
-			if (color > colorMax) colorMax = color;
-			if (color < colorMin) colorMin = color;
-
-			testPic.setPixel(x, y, 0, color, 0);
+			fractal[y * WIDTH + x] = iter;
+			/* ignore MAX_ITER, smooth histIteration distribution */
+			if (iter == Mandelbrot::MAX_ITER) continue;
+			histIteration[iter] += 1;
 		}
 	}
-	cout << colorMin << ' ' << colorMax << endl;
+
+	for (int i = 0; i < Mandelbrot::MAX_ITER; i++) {
+		if (i == 0) {
+			cumlIteration[i] = histIteration[i];
+		}
+		else {
+			cumlIteration[i] = cumlIteration[i-1] + histIteration[i];
+		}
+	}
+
+	for (int x = 0; x < WIDTH; x++) {
+		for (int y = 0; y < HEIGHT; y++) {
+			int iter = fractal[y * WIDTH + x];
+			double hue = 1.0;  // hue value for MAX_ITER
+			if (iter < Mandelbrot::MAX_ITER) {
+				hue = (double) cumlIteration[iter] / cumlIteration[Mandelbrot::MAX_ITER - 1];
+			}
+			testPic.setPixel(x, y, 0, 255 * hue, 0);
+		}
+	}
 	testPic.write("test.bmp");
 
 	cout << "!!!Finish!!!" << endl;
