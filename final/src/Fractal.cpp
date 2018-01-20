@@ -8,6 +8,7 @@
 #include <iostream>
 #include <cstdint>
 #include <memory>
+#include <math.h>
 #include "Bitmap.h"
 #include "Mandelbrot.h"
 using namespace std;
@@ -26,7 +27,7 @@ int main() {
 		for (int y = 0; y < HEIGHT; y++) {
 //			double xRescale = (x - WIDTH/2) * 2.0 / WIDTH;  // original ratio
 //			double xRescale = (x - WIDTH/2) * 2.0 / HEIGHT;  // 1:1 ratio
-			double xRescale = (x - WIDTH/2 - 100) * 2.0 / HEIGHT;  // horizontal shift
+			double xRescale = (x - WIDTH/2 - 200) * 2.0 / HEIGHT;  // horizontal shift
 			double yRescale = (y - HEIGHT/2) * 2.0 / HEIGHT;
 			int iter = Mandelbrot::getIteration(xRescale, yRescale);
 
@@ -37,6 +38,7 @@ int main() {
 		}
 	}
 
+	/* A cumulative distribution for color palette */
 	for (int i = 0; i < Mandelbrot::MAX_ITER; i++) {
 		if (i == 0) {
 			cumlIteration[i] = histIteration[i];
@@ -45,15 +47,19 @@ int main() {
 			cumlIteration[i] = cumlIteration[i-1] + histIteration[i];
 		}
 	}
+	cout << cumlIteration[Mandelbrot::MAX_ITER - 1] << "; " << WIDTH * HEIGHT << endl;
 
 	for (int x = 0; x < WIDTH; x++) {
 		for (int y = 0; y < HEIGHT; y++) {
 			int iter = fractal[y * WIDTH + x];
-			double hue = 1.0;  // hue value for MAX_ITER
+			double hue = 0.0;  // hue value for MAX_ITER
 			if (iter < Mandelbrot::MAX_ITER) {
 				hue = (double) cumlIteration[iter] / cumlIteration[Mandelbrot::MAX_ITER - 1];
 			}
-			testPic.setPixel(x, y, 0, 255 * hue, 0);
+			uint8_t red = 0;
+			uint8_t green = pow(255, hue);
+			uint8_t blue = 0;
+			testPic.setPixel(x, y, red, green, blue);
 		}
 	}
 	testPic.write("test.bmp");
