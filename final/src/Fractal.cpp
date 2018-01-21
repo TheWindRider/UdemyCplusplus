@@ -11,6 +11,7 @@
 #include <math.h>
 #include "Bitmap.h"
 #include "Mandelbrot.h"
+#include "ZoomList.h"
 using namespace std;
 using namespace udemy;
 
@@ -23,13 +24,14 @@ int main() {
 	unique_ptr<int[]> fractal(new int[WIDTH * HEIGHT]{0});
 
 	Bitmap testPic(WIDTH, HEIGHT);
+	ZoomList currZoom(WIDTH, HEIGHT);
+	Zoom centerZoom(WIDTH/2 - 50, HEIGHT/2, 2.0/HEIGHT);
+	currZoom.add(centerZoom);
+
 	for (int x = 0; x < WIDTH; x++) {
 		for (int y = 0; y < HEIGHT; y++) {
-//			double xRescale = (x - WIDTH/2) * 2.0 / WIDTH;  // original ratio
-//			double xRescale = (x - WIDTH/2) * 2.0 / HEIGHT;  // 1:1 ratio
-			double xRescale = (x - WIDTH/2 - 200) * 2.0 / HEIGHT;  // horizontal shift
-			double yRescale = (y - HEIGHT/2) * 2.0 / HEIGHT;
-			int iter = Mandelbrot::getIteration(xRescale, yRescale);
+			pair<double, double> coord = currZoom.doZoom(x, y);
+			int iter = Mandelbrot::getIteration(coord.first, coord.second);
 
 			fractal[y * WIDTH + x] = iter;
 			/* ignore MAX_ITER, smooth histIteration distribution */
