@@ -1,59 +1,53 @@
-//============================================================================
-// Name        : Fractal.cpp
-// Author      : Chenguang Yang
-
-// Description : Udemy Project
-//============================================================================
+/*
+ * Fractal.cpp
+ *
+ *  Created on: Jan 21, 2018
+ *      Author: Chenguang
+ */
 
 #include <iostream>
 #include <cstdint>
-#include <memory>
 #include <math.h>
-#include "Bitmap.h"
+#include "Fractal.h"
 #include "Mandelbrot.h"
-#include "ZoomList.h"
 using namespace std;
-using namespace udemy;
 
-int main() {
-	const int WIDTH = 800;
-	const int HEIGHT = 600;
+namespace udemy {
 
-	unique_ptr<int[]> histIteration(new int[Mandelbrot::MAX_ITER]{0});
-	unique_ptr<int[]> cumlIteration(new int[Mandelbrot::MAX_ITER]{0});
-	unique_ptr<int[]> fractal(new int[WIDTH * HEIGHT]{0});
+Fractal::Fractal(int width, int height): m_width(width), m_height(height),
+		histIteration(new int[Mandelbrot::MAX_ITER]{0}),
+		cumlIteration(new int[Mandelbrot::MAX_ITER]{0}),
+		fractal(new int[m_width * m_height]{0}), v_zooms(width, height), fractalImg(width, height) {
+	// TODO Auto-generated constructor stub
+}
 
-	Bitmap testPic(WIDTH, HEIGHT);
-	ZoomList currZoom(WIDTH, HEIGHT);
-	Zoom centerZoom(WIDTH/2 - 50, HEIGHT/2, 2.0/HEIGHT);
-	currZoom.add(centerZoom);
+void Fractal::addZoom(const Zoom& one_zoom) {
+	v_zooms.add(one_zoom);
+}
 
-	for (int x = 0; x < WIDTH; x++) {
-		for (int y = 0; y < HEIGHT; y++) {
-			pair<double, double> coord = currZoom.doZoom(x, y);
+void Fractal::calcIteration() {
+	for (int x = 0; x < m_width; x++) {
+		for (int y = 0; y < m_height; y++) {
+			pair<double, double> coord = v_zooms.doZoom(x, y);
 			int iter = Mandelbrot::getIteration(coord.first, coord.second);
 
-			fractal[y * WIDTH + x] = iter;
+			fractal[y * m_width + x] = iter;
 			/* ignore MAX_ITER, smooth histIteration distribution */
 			if (iter == Mandelbrot::MAX_ITER) continue;
 			histIteration[iter] += 1;
 		}
 	}
-
 	/* A cumulative distribution for color palette */
-	for (int i = 0; i < Mandelbrot::MAX_ITER; i++) {
-		if (i == 0) {
-			cumlIteration[i] = histIteration[i];
-		}
-		else {
-			cumlIteration[i] = cumlIteration[i-1] + histIteration[i];
-		}
+	cumlIteration[0] = histIteration[0];
+	for (int i = 1; i < Mandelbrot::MAX_ITER; i++) {
+		cumlIteration[i] = cumlIteration[i-1] + histIteration[i];
 	}
-	cout << cumlIteration[Mandelbrot::MAX_ITER - 1] << "; " << WIDTH * HEIGHT << endl;
+}
 
-	for (int x = 0; x < WIDTH; x++) {
-		for (int y = 0; y < HEIGHT; y++) {
-			int iter = fractal[y * WIDTH + x];
+void Fractal::drawPixel() {
+	for (int x = 0; x < m_width; x++) {
+		for (int y = 0; y < m_height; y++) {
+			int iter = fractal[y * m_width + x];
 			double hue = 0.0;  // hue value for MAX_ITER
 			if (iter < Mandelbrot::MAX_ITER) {
 				hue = (double) cumlIteration[iter] / cumlIteration[Mandelbrot::MAX_ITER - 1];
@@ -61,11 +55,18 @@ int main() {
 			uint8_t red = 0;
 			uint8_t green = pow(255, hue);
 			uint8_t blue = 0;
-			testPic.setPixel(x, y, red, green, blue);
+			fractalImg.setPixel(x, y, red, green, blue);
 		}
 	}
-	testPic.write("test.bmp");
-
-	cout << "!!!Finish!!!" << endl;
-	return 0;
 }
+
+void Fractal::writeBitmpa(string filename) {
+	fractalImg.write(filename);
+	cout << "!!!Finish!!!" << endl;
+}
+
+Fractal::~Fractal() {
+	// TODO Auto-generated destructor stub
+}
+
+} /* namespace udemy */
