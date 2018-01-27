@@ -26,11 +26,9 @@ public:
 	ZoomList(int width, int height): m_width(width), m_height(height) {};
 	void add(const Zoom& zoom) {
 		zooms.push_back(zoom);
-		m_scale *= zoom.scale;
 		m_xCenter += (zoom.x - m_width/2) * m_scale;
 		m_yCenter += (zoom.y - m_height/2) * m_scale;
-
-		cout << '(' << m_xCenter << ',' << m_yCenter << ')' << " * " << m_scale << endl;
+		m_scale *= zoom.scale;
 	};
 	pair<double, double> doZoom(int x, int y) {
 		double xFractal = (x - m_width/2) * m_scale + m_xCenter;
