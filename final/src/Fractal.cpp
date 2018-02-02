@@ -10,6 +10,7 @@
 #include <math.h>
 #include "Fractal.h"
 #include "Mandelbrot.h"
+#include "RGB.h"
 using namespace std;
 
 namespace udemy {
@@ -45,6 +46,8 @@ void Fractal::calcIteration() {
 }
 
 void Fractal::drawPixel() {
+	RGB start(0, 0, 255);
+	RGB end(0, 255, 0);
 	for (int x = 0; x < m_width; x++) {
 		for (int y = 0; y < m_height; y++) {
 			int iter = fractal[y * m_width + x];
@@ -52,10 +55,8 @@ void Fractal::drawPixel() {
 			if (iter < Mandelbrot::MAX_ITER) {
 				hue = (double) cumlIteration[iter] / cumlIteration[Mandelbrot::MAX_ITER - 1];
 			}
-			uint8_t red = 0;
-			uint8_t green = pow(255, hue);
-			uint8_t blue = 0;
-			fractalImg.setPixel(x, y, red, green, blue);
+			RGB curr = (end - start) * hue + start;
+			fractalImg.setPixel(x, y, curr.red, curr.green, curr.blue);
 		}
 	}
 }
