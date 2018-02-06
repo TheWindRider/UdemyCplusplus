@@ -26,6 +26,14 @@ void Fractal::addZoom(const Zoom& one_zoom) {
 	v_zooms.add(one_zoom);
 }
 
+void Fractal::addRange(double rangeEnd, const RGB& colorEnd, bool firstRange) {
+	milestone_range.push_back(Mandelbrot::MAX_ITER * rangeEnd);
+	milestone_color.push_back(colorEnd);
+	if (!firstRange) {
+		milestone_pixel.push_back(0);
+	}
+}
+
 void Fractal::calcIteration() {
 	for (int x = 0; x < m_width; x++) {
 		for (int y = 0; y < m_height; y++) {
@@ -43,6 +51,17 @@ void Fractal::calcIteration() {
 	for (int i = 1; i < Mandelbrot::MAX_ITER; i++) {
 		cumlIteration[i] = cumlIteration[i-1] + histIteration[i];
 	}
+}
+
+void Fractal::calcRangePixel() {
+	int rangeIndex = 0;
+	for (int i = 1; i < Mandelbrot::MAX_ITER; i++) {
+		if (i >= milestone_range[rangeIndex + 1]) {
+			rangeIndex += 1;
+		}
+		milestone_pixel[rangeIndex] += histIteration[i];
+	}
+	for (int value : milestone_pixel) cout << value << endl;
 }
 
 void Fractal::drawPixel() {
