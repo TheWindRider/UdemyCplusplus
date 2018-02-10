@@ -33,6 +33,7 @@ public:
 	Fractal(int width, int height);
 	void addZoom(const Zoom& one_zoom);
 	void addRange(double rangeEnd, const RGB& colorEnd, bool firstRange = false);
+	int getRange(int iterations) const;
 	void calcIteration();
 	void calcRangePixel();
 	void drawPixel();

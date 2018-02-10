@@ -33,6 +33,15 @@ void Fractal::addRange(double rangeEnd, const RGB& colorEnd, bool firstRange) {
 		milestone_pixel.push_back(0);
 	}
 }
+int Fractal::getRange(int iterations) const {
+	int range = 0;
+	for (int i = 1; i < milestone_range.size(); i++) {
+		range = i;
+		if (milestone_range[i] > iterations) break;
+	}
+	range -= 1;
+	return range;
+}
 
 void Fractal::calcIteration() {
 	for (int x = 0; x < m_width; x++) {
@@ -51,6 +60,9 @@ void Fractal::calcIteration() {
 	for (int i = 1; i < Mandelbrot::MAX_ITER; i++) {
 		cumlIteration[i] = cumlIteration[i-1] + histIteration[i];
 	}
+	/* sanity check
+	cout << "Total 2: " << cumlIteration[Mandelbrot::MAX_ITER - 1] << endl;
+	*/
 }
 
 void Fractal::calcRangePixel() {
@@ -61,7 +73,14 @@ void Fractal::calcRangePixel() {
 		}
 		milestone_pixel[rangeIndex] += histIteration[i];
 	}
-	for (int value : milestone_pixel) cout << value << endl;
+	/* sanity check
+	int total_pixel = 0;
+	for (int value : milestone_pixel) {
+		cout << value << endl;
+		total_pixel += value;
+	}
+	cout << "Total 1: " << total_pixel << endl;
+	*/
 }
 
 void Fractal::drawPixel() {
