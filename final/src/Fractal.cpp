@@ -84,14 +84,22 @@ void Fractal::calcRangePixel() {
 }
 
 void Fractal::drawPixel() {
-	RGB start(0, 0, 255);
-	RGB end(0, 255, 0);
 	for (int x = 0; x < m_width; x++) {
 		for (int y = 0; y < m_height; y++) {
 			int iter = fractal[y * m_width + x];
-			double hue = 0.0;  // hue value for MAX_ITER
+			int range = getRange(iter);
+			int rangePixel = milestone_pixel[range];
+			int rangeStart = milestone_range[range];
+			RGB& start = milestone_color[range];
+			RGB& end = milestone_color[range + 1];
+
+			double hue = 1.0;  // hue value for MAX_ITER
 			if (iter < Mandelbrot::MAX_ITER) {
-				hue = (double) cumlIteration[iter] / cumlIteration[Mandelbrot::MAX_ITER - 1];
+				int rangePixelCount = 0;
+				for (int i = rangeStart; i <= iter; i++) {
+					rangePixelCount += histIteration[i];
+				}
+				hue = (double) (cumlIteration[iter] - cumlIteration[rangeStart]) / rangePixel;
 			}
 			RGB curr = (end - start) * hue + start;
 			fractalImg.setPixel(x, y, curr.red, curr.green, curr.blue);
