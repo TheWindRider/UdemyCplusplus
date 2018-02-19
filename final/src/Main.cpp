@@ -23,10 +23,18 @@ int main() {
 	Zoom centerZoom(WIDTH/2, HEIGHT/2, 2.0/HEIGHT);
 	fractalPicture.addZoom(centerZoom);
 	fractalPicture.addZoom(Zoom(250, 450, 0.3));
+	fractalPicture.addZoom(Zoom(325, 425, 0.2));
+
+	fractalPicture.addRange(0.0, RGB(0, 200, 255), true);
+	fractalPicture.addRange(0.002, RGB(50, 150, 200));
+	fractalPicture.addRange(0.01, RGB(100, 100, 150));
+	fractalPicture.addRange(0.1, RGB(150, 50, 50));
+	fractalPicture.addRange(1.0, RGB(255, 0, 0));
 
 	fractalPicture.calcIteration();
+	fractalPicture.calcRangePixel();
 	fractalPicture.drawPixel();
-	fractalPicture.writeBitmpa("test.bmp");
+	fractalPicture.writeBitmpa("Mandelbrot.bmp");
 
 	return 0;
 }
