@@ -25,11 +25,10 @@ int main() {
 	fractalPicture.addZoom(Zoom(250, 450, 0.3));
 	fractalPicture.addZoom(Zoom(325, 425, 0.2));
 
-	fractalPicture.addRange(0.0, RGB(0, 200, 255), true);
-	fractalPicture.addRange(0.002, RGB(50, 150, 200));
-	fractalPicture.addRange(0.01, RGB(100, 100, 150));
-	fractalPicture.addRange(0.1, RGB(150, 50, 50));
-	fractalPicture.addRange(1.0, RGB(255, 0, 0));
+	fractalPicture.addRange(0.0, RGB(100, 100, 50), true);
+	fractalPicture.addRange(0.01, RGB(50, 255, 50));
+	fractalPicture.addRange(0.1, RGB(50, 50, 255));
+	fractalPicture.addRange(1.0, RGB(100, 50, 100));
 
 	fractalPicture.calcIteration();
 	fractalPicture.calcRangePixel();
